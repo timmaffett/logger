@@ -115,7 +115,7 @@ class PrettyPrinter extends LogPrinter {
 
     // Translate excludeBox map (constant if default) to includeBox map with all Level enum possibilities
     includeBox = {};
-    for (Level levelEnum in Level.values) {
+    for (var levelEnum in Level.values) {
       includeBox[levelEnum] = excludeBox.containsKey(levelEnum)
           ? !excludeBox[levelEnum]!
           : !noBoxingByDefault;
