@@ -18,10 +18,11 @@ class LogfmtPrinter extends LogPrinter {
   @override
   List<String> log(LogEvent event) {
     var output = StringBuffer('level=${levelPrefixes[event.level]}');
-    if (event.message is String) {
-      output.write(' msg="${event.message}"');
-    } else if (event.message is Map) {
-      event.message.entries.forEach((entry) {
+    final finalMessage = event.message is Function ? event.message() : event.message;
+    if (finalMessage is String) {
+      output.write(' msg="$finalMessage"');
+    } else if (finalMessage is Map) {
+      finalMessage.entries.forEach((entry) {
         if (entry.value is num) {
           output.write(' ${entry.key}=${entry.value}');
         } else {
