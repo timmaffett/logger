@@ -47,15 +47,15 @@ class SimplePrinter extends LogPrinter {
     return colors ? color(prefix) : prefix;
   }
 
-  // Handles any object that is causing JsonEncoder() problems
-  Object toEncodableFallback(dynamic object) {
+  // Handles any object that is causing JsonEncoder() problems (ie prevent exceptions)
+  Object _toEncodableFallback(dynamic object) {
     return object.toString();
   }
 
   String _stringifyMessage(dynamic message) {
     final finalMessage = message is Function ? message() : message;
     if (finalMessage is Map || finalMessage is Iterable) {
-      var encoder = JsonEncoder.withIndent(null, toEncodableFallback);
+      var encoder = JsonEncoder.withIndent(null, _toEncodableFallback);
       return encoder.convert(message);
     } else {
       return message.toString();
