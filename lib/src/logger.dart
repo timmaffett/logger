@@ -70,6 +70,11 @@ class Logger {
     _output.init();
   }
 
+  /// Change the [level] in this Logger() object's existing [_filter] object (for use AFTER instantiation)
+  void changeFiltersLevel( Level newFilterLevel ) {
+    _filter.level = newFilterLevel;
+  }
+
   /// Log a message at level [Level.verbose].
   void v(dynamic message, [dynamic error, StackTrace? stackTrace]) {
     log(Level.verbose, message, error, stackTrace);
