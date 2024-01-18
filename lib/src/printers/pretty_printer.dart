@@ -79,7 +79,7 @@ class PrettyPrinter extends LogPrinter {
   /// for example to prevent boxing of [Level.verbose] and [Level.info] use excludeBox:{Level.verbose:true, Level.info:true}
   final Map<Level, bool> excludeBox;
 
-  /// To make the default for every level to prevent boxing entirely set [noBoxing] to true
+  /// To make the default for every level to prevent boxing entirely set [noBoxingByDefault] to true
   /// (boxing can still be turned on for some levels by using something like excludeBox:{Level.error:false} )
   final bool noBoxingByDefault;
 
@@ -115,11 +115,8 @@ class PrettyPrinter extends LogPrinter {
 
     // Translate excludeBox map (constant if default) to includeBox map with all Level enum possibilities
     includeBox = {};
-    for (var levelEnum in Level.values) {
-      includeBox[levelEnum] = excludeBox.containsKey(levelEnum)
-          ? !excludeBox[levelEnum]!
-          : !noBoxingByDefault;
-    }
+    Level.values.forEach((l) => includeBox[l] = !noBoxingByDefault);
+    excludeBox.forEach((k, v) => includeBox[k] = !v);
   }
 
   @override
@@ -226,17 +223,16 @@ class PrettyPrinter extends LogPrinter {
   }
 
   // Handles any object that is causing JsonEncoder() problems
-  Object _toEncodableFallback(dynamic object) {
+  Object toEncodableFallback(dynamic object) {
     return object.toString();
   }
 
   String stringifyMessage(dynamic message) {
-    final finalMessage = message is Function ? message() : message;
-    if (finalMessage is Map || finalMessage is Iterable) {
-      var encoder = JsonEncoder.withIndent('  ', _toEncodableFallback);
-      return encoder.convert(finalMessage);
+    if (message is Map || message is Iterable) {
+      var encoder = JsonEncoder.withIndent('  ', toEncodableFallback);
+      return encoder.convert(message);
     } else {
-      return finalMessage.toString();
+      return message.toString();
     }
   }
 
